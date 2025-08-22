@@ -30,21 +30,21 @@ export class CodeInput {
   @ViewChild('inputRef3') inputRef3!: ElementRef<HTMLInputElement>;
   @ViewChild('inputRef4') inputRef4!: ElementRef<HTMLInputElement>;
 
-  @Output() valueEvent = new EventEmitter<number[]>();
+  @Output() value = new EventEmitter<number[]>();
 
   fieldControl: FieldControl;
 
+  constructor() {
+    this.fieldControl = this.createFieldControl();
+  }
+
   sendValue() {
-    this.valueEvent.emit([
+    this.value.emit([
       this.fieldControl.input(0).value,
       this.fieldControl.input(1).value,
       this.fieldControl.input(2).value,
       this.fieldControl.input(3).value
     ]);
-  }
-
-  onClick() {
-
   }
 
   createFieldControl(): FieldControl {
@@ -61,9 +61,9 @@ export class CodeInput {
 
         return {
           control: inputControl,
-          set value(inputValue: string) {
+          set value(inputValue: number) {
             if (inputControl) {
-              const match = inputValue.match(/^[0-9]?/);
+              const match = String(inputValue).match(/^[0-9]?/);
               inputControl.setValue(match ? match[0] : '', { emitEvent: false })
             } else {
               throw new Error(`The field number ${fieldNumber} doesn't exist`);
@@ -78,14 +78,6 @@ export class CodeInput {
         return controls.map(control => Number(control.value))
       }
     }
-  }
-
-  clearField() {
-
-  }
-
-  constructor() {
-    this.fieldControl = this.createFieldControl();
   }
 
   moveFocus(direction: 1 | -1) {

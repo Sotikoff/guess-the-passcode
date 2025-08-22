@@ -11,4 +11,8 @@ import { CodeInput } from './code-input/code-input';
 })
 export class App {
   title = "GUESS THE PASSCODE";
+
+  printValue(value: number[]) {
+    console.log(value)
+  }
 }

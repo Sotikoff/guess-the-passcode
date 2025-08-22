@@ -1,8 +1,18 @@
-mat-form-field {
-    width: 3rem;
+:host {
+    display: flex;
+    align-items: center;
+}
+
+input {
+    width: 48px;
+    height: 56px;
+    border-radius: 4px;
+    border-width: 1px;
+    text-align: center;
+    font-size: xx-large;
 
     &:not(:last-of-type) {
-        padding-right: 1rem;
+        margin-right: 16px;
     }
 }
 
@@ -13,4 +23,8 @@ button {
     background-color: blue;
     color: white;
     border: none;
+
+    margin-left: 24px;
+
+    font-weight: bold;
 }
