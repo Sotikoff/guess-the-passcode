@@ -1,0 +1,16 @@
+mat-form-field {
+    width: 3rem;
+
+    &:not(:last-of-type) {
+        padding-right: 1rem;
+    }
+}
+
+button {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: blue;
+    color: white;
+    border: none;
+}
