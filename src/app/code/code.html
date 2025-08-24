@@ -1,9 +1,11 @@
 @for (digit of digits(); track digit.id) {
-<span>
-    @if (digit.revealed) {
+@if (digit.revealed) {
+<span class="value-revealed">
     {{digit.value}}
-    } @else {
-    *
-    }
 </span>
+} @else {
+<span>
+    *
+</span>
+}
 }

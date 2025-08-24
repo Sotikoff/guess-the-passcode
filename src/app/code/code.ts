@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, HostBinding, input } from '@angular/core';
 
 interface Digit {
   id: string;
@@ -13,6 +13,9 @@ interface Digit {
   styleUrl: './code.scss'
 })
 export class Code {
+
+  theme = input<'default' | 'primary'>('default')
+  @HostBinding('class.primary-theme') primaryActive: boolean = false;
   hidden = input<boolean>(false);
   value = input.required<number[]>();
   positionsRevealed = input<number[]>();
@@ -25,4 +28,9 @@ export class Code {
       }
     })
   )
+
+  ngOnInit() {
+    this.primaryActive = computed(() => this.theme() === 'primary')()
+    console.log(this.primaryActive)
+  }
 }
