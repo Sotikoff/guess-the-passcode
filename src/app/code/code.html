@@ -1,0 +1,9 @@
+@for (digit of digits(); track digit.id) {
+<span>
+    @if (digit.revealed) {
+    {{digit.value}}
+    } @else {
+    *
+    }
+</span>
+}
