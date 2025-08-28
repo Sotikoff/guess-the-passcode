@@ -1,3 +1,5 @@
 <h1>{{title}}</h1>
 
-<app-code-input (value)="printValue($event)"></app-code-input>
+<app-code [value]="codeToGuess" [hidden]="true" [positionsRevealed]="positionsGuessed"></app-code>
+
+<app-code-input (value)="guessCode($event)"></app-code-input>
