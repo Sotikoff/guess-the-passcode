@@ -1,15 +1,15 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, input, Output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 
 interface FieldControl {
   input(fieldNumber: number): {
     control: FormControl,
-    value: number;
+    value?: number;
   };
+  valid: boolean;
   valueTotal: number[];
+  inputControls: FormControl[];
 }
 
 @Component({
@@ -19,49 +19,48 @@ interface FieldControl {
   styleUrl: './code-input.scss',
   imports: [
     ReactiveFormsModule,
-    MatInputModule,
-    MatButton,
     MatIcon
   ]
 })
 export class CodeInput {
-  @ViewChild('inputRef1') inputRef1!: ElementRef<HTMLInputElement>;
-  @ViewChild('inputRef2') inputRef2!: ElementRef<HTMLInputElement>;
-  @ViewChild('inputRef3') inputRef3!: ElementRef<HTMLInputElement>;
-  @ViewChild('inputRef4') inputRef4!: ElementRef<HTMLInputElement>;
-
   @Output() value = new EventEmitter<number[]>();
+
+  positionsToLock = input<number[]>([]);
+  length = input(4);
 
   fieldControl: FieldControl;
 
-  constructor() {
+  constructor(private hostRef: ElementRef<HTMLElement>) {
     this.fieldControl = this.createFieldControl();
+
+    effect(() => {
+      this.fieldControl.inputControls.forEach((control, index) => {
+        if (this.positionsToLock().includes(index)) {
+          control.disable()
+        }
+      })
+    })
   }
 
-  sendValue() {
-    this.value.emit([
-      this.fieldControl.input(0).value,
-      this.fieldControl.input(1).value,
-      this.fieldControl.input(2).value,
-      this.fieldControl.input(3).value
-    ]);
+  ngOnChanges() {
+    console.log(this.positionsToLock())
   }
 
   createFieldControl(): FieldControl {
-    const controls = [
-      new FormControl(''),
-      new FormControl(''),
-      new FormControl(''),
-      new FormControl('')
-    ];
+    const controls: FormControl[] = [];
+
+    for (let i = 0; i < this.length(); i++) {
+      controls.push(new FormControl(''))
+    }
 
     return {
-      input(fieldNumber: number) {
+      inputControls: controls,
+      input(fieldNumber) {
         const inputControl = controls[fieldNumber];
 
         return {
           control: inputControl,
-          set value(inputValue: number) {
+          set value(inputValue) {
             if (inputControl) {
               const match = String(inputValue).match(/^[0-9]?/);
               inputControl.setValue(match ? match[0] : '', { emitEvent: false })
@@ -69,10 +68,13 @@ export class CodeInput {
               throw new Error(`The field number ${fieldNumber} doesn't exist`);
             }
           },
-          get value(): number {
-            return Number(inputControl.value);
+          get value() {
+            return inputControl.value ? Number(inputControl.value) : undefined;
           }
         }
+      },
+      get valid() {
+        return controls.every(control => Boolean(control.value))
       },
       get valueTotal() {
         return controls.map(control => Number(control.value))
@@ -81,19 +83,75 @@ export class CodeInput {
   }
 
   moveFocus(direction: 1 | -1) {
-    const refs = [this.inputRef1, this.inputRef2, this.inputRef3, this.inputRef4];
+    const inputElements = this.hostRef.nativeElement.children;
 
-    for (let i = 0; i < refs.length; i++) {
-      const ref = refs[i];
+    for (let i = 0; i < inputElements.length; i++) {
+      const targetElement = inputElements[i];
 
-      if (ref.nativeElement === document.activeElement) {
-        const elementToFocus = refs[i + direction];
+      if (targetElement === document.activeElement) {
+        const elementToFocus = inputElements[i + direction];
 
-        if (elementToFocus) {
-          elementToFocus.nativeElement.select();
+        if (!elementToFocus) break;
+
+        if (elementToFocus instanceof HTMLInputElement) {
+          elementToFocus.focus();
+          setTimeout(() => elementToFocus.setSelectionRange(elementToFocus.value.length, elementToFocus.value.length));
+          break;
+        } else if (elementToFocus instanceof HTMLButtonElement) {
+          elementToFocus.focus();
           break;
         }
       }
+    }
+  }
+
+  submitValue() {
+    if (this.fieldControl.valid) {
+      this.value.emit(this.fieldControl.valueTotal);
+    }
+  }
+
+  isArrowKeydownEvent(event: KeyboardEvent) {
+    return event.key === 'ArrowLeft' || event.key === 'ArrowRight';
+  }
+
+  isInputDisabled(index: number) {
+    return this.positionsToLock().includes(index)
+  }
+
+  arrowAction(event: KeyboardEvent) {
+    const direction = event.key === 'ArrowLeft' ? -1 : event.key === 'ArrowRight' ? 1 : 0;
+
+    if (direction) {
+      return this.moveFocus(direction);
+    }
+  }
+
+  onSubmitKeydown(event: KeyboardEvent) {
+    if (this.isArrowKeydownEvent(event)) {
+      this.arrowAction(event)
+    }
+  }
+
+  onInputKeydown(event: KeyboardEvent, index: number) {
+    if (event.key === 'Backspace' && this.fieldControl.input(index).value === undefined) {
+      return this.moveFocus(-1);
+    }
+
+    if (this.isArrowKeydownEvent(event)) {
+      this.arrowAction(event)
+    }
+  }
+
+  onSubmitKeyUp(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.submitValue();
+    }
+  }
+
+  onSubmitClick(event: MouseEvent) {
+    if (event.button === 0 && event.detail !== 0) {
+      this.submitValue();
     }
   }
 
@@ -103,8 +161,6 @@ export class CodeInput {
     if (input.value) {
       this.fieldControl.input(Number(input.id)).value = Number(input.value);
       this.moveFocus(1);
-    } else {
-      this.moveFocus(-1);
     }
   }
 }

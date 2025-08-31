@@ -2,7 +2,23 @@
     display: block;
 }
 
+:host.primary-theme {
+    span {
+        font-weight: 700;
+        font-size: 110px;
+    }
+
+    .value-revealed {
+        color: #7eed39;
+    }
+}
+
 span {
-    font-weight: 700;
+    width: 70px;
+    display: inline-block;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center;
+    font-weight: 500;
     font-size: 72px;
 }

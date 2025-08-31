@@ -4,27 +4,35 @@
 }
 
 input {
-    width: 48px;
+    padding: 10px 0;
+    width: 70px;
     height: 56px;
     border-radius: 4px;
     border-width: 1px;
     text-align: center;
-    font-size: xx-large;
+    font-size: 72px;
 
-    &:not(:last-of-type) {
-        margin-right: 16px;
-    }
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 button {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background-color: blue;
+    background-color: lightblue;
     color: white;
     border: none;
 
     margin-left: 24px;
 
     font-weight: bold;
+
+    &:active {
+        transform: scale(0.90);
+    }
+
+    &:focus {
+        background-color: blue;
+    }
 }

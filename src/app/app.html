@@ -1,5 +1,11 @@
 <h1>{{title}}</h1>
 
-<app-code [value]="codeToGuess" [hidden]="true" [positionsRevealed]="positionsGuessed"></app-code>
+<app-code [value]="codeToGuess" [hidden]="true" [positionsRevealed]="positionsGuessed" [theme]="'primary'"></app-code>
 
-<app-code-input (value)="guessCode($event)"></app-code-input>
+<ul class="attempts">
+    @for(attempt of attempts; track $index) {
+    <app-code class="attempt" [value]="attempt"></app-code>
+    }
+</ul>
+
+<app-code-input [positionsToLock]="positionsGuessed" (value)="guessCode($event)"></app-code-input>
