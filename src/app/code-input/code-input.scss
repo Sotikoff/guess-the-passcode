@@ -20,11 +20,19 @@ button {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background-color: blue;
+    background-color: lightblue;
     color: white;
     border: none;
 
     margin-left: 24px;
 
     font-weight: bold;
+
+    &:active {
+        transform: scale(0.90);
+    }
+
+    &:focus {
+        background-color: blue;
+    }
 }

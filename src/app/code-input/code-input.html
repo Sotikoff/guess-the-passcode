@@ -1,9 +1,6 @@
-<input #inputRef1 id="0" matInput type="text" maxlength="1" pattern="[0-9]"
-    [formControl]="fieldControl.input(0).control" (input)="onInputChange($event)" />
-<input #inputRef2 id="1" matInput type="text" maxlength="1" pattern="[0-9]"
-    [formControl]="fieldControl.input(1).control" (input)="onInputChange($event)" />
-<input #inputRef3 id="2" matInput type="text" maxlength="1" pattern="[0-9]"
-    [formControl]="fieldControl.input(2).control" (input)="onInputChange($event)" />
-<input #inputRef4 id="3" matInput type="text" maxlength="1" pattern="[0-9]"
-    [formControl]="fieldControl.input(3).control" (input)="onInputChange($event)" />
-<button mat-fab color="primary" (click)="sendValue()"><mat-icon>check</mat-icon></button>
+@for(control of fieldControl.inputControls; track $index.toString()) {
+<input [id]="$index.toString()" [formControl]="control" (input)="onInputChange($event)"
+    (keydown)="onInputKeydown($event, $index)" tabindex="0" type="text" maxlength="1" pattern="[0-9]" />
+}
+<button tabindex="0" (click)="onSubmitClick($event)" (keyup)="onSubmitKeyUp($event)"
+    (keydown)="onSubmitKeydown($event)"><mat-icon>check</mat-icon></button>

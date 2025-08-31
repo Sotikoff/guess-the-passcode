@@ -8,4 +8,4 @@
     }
 </ul>
 
-<app-code-input (value)="guessCode($event)"></app-code-input>
+<app-code-input [positionsToLock]="positionsGuessed" (value)="guessCode($event)"></app-code-input>

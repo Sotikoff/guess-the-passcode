@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 
 import { Code } from './code/code';
 import { CodeInput } from './code-input/code-input';
@@ -7,7 +6,7 @@ import { CodeService } from './code.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CodeInput, Code],
+  imports: [CodeInput, Code],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
